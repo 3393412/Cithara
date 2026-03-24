@@ -22,7 +22,7 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
-
+audio/
 # Django stuff:
 *.log
 *.pot
