@@ -1,2 +1,13 @@
-
+Getmethod
 ![คำอธิบายรูป](images/image.png)
+![คำอธิบายรูป](images/Screenshot%202026-03-24%20232901.png)
+Postmethod
+![คำอธิบายรูป](images/Screenshot%202026-03-24%20232148.png)
+![คำอธิบายรูป](images/Screenshot%202026-03-24%20232225.png)
+![คำอธิบายรูป](images/Screenshot%202026-03-24%20232403.png)
+Putmethod
+![คำอธิบายรูป](images/Screenshot%202026-03-24%20232507.png)
+![คำอธิบายรูป](images/Screenshot%202026-03-24%20232517.png)
+DeleteMethod
+![คำอธิบายรูป](images/Screenshot%202026-03-24%20232525.png)
+![คำอธิบายรูป](images/Screenshot%202026-03-24%20232539.png)
