@@ -1,3 +1,9 @@
+Set-up
+Clone this repository 
+  run command python manage.py runserver in terminal on root 
+Checkout on your local host 
+  urls /admin
+      /api/songs/
 Getmethod
 ![คำอธิบายรูป](images/image.png)
 ![คำอธิบายรูป](images/Screenshot%202026-03-24%20232901.png)
