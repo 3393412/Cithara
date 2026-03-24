@@ -65,46 +65,36 @@ def songs_api(request):
         return JsonResponse(data, safe=False)
 
     elif request.method == "POST":
+        data = request.POST
+
+        username = data.get("username")
+        if not username:
+            return JsonResponse({"error": "username is required"}, status=400)
+
         try:
-            data = json.loads(request.body)
-            username = data.get("username")
-            if not username:
-                return JsonResponse({"error": "username is required"}, status=400)
-            try:
-                user = User.objects.get(username=username)
-            except User.DoesNotExist:
-                return JsonResponse({"error": "User not found"}, status=404)
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return JsonResponse({"error": "User not found"}, status=404)
 
-            song = Song.objects.create(
-                user=user,
-                title=data.get("title", ""),
-                genre=data.get("genre", ""),
-                duration=data.get("duration", 0),
-                occasion=data.get("occasion", ""),
-                prompt=data.get("prompt", ""),
-                story=data.get("story", ""),
-                vocal=data.get("vocal", ""),
-                mood=data.get("mood", ""),
-                path=data.get("path", ""),
-            )
+        file = request.FILES.get("path")
 
-            return JsonResponse({
-                "id": song.id,
-                "title": song.title,
-                "genre": song.genre,
-                "duration": song.duration,
-                "occasion": song.occasion,
-                "prompt": song.prompt,
-                "story": song.story,
-                "vocal": song.vocal,
-                "mood": song.mood,
-                "path": song.path.url if song.path else "",
-                "create_at": song.create_at.isoformat(),
-                "user": song.user.username
-            }, status=201)
-
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "Invalid JSON"}, status=400)
+        song = Song.objects.create(
+            user=user,
+            title=data.get("title", ""),
+            genre=data.get("genre", ""),
+            duration=data.get("duration", 0),
+            occasion=data.get("occasion", ""),
+            prompt=data.get("prompt", ""),
+            story=data.get("story", ""),
+            vocal=data.get("vocal", ""),
+            mood=data.get("mood", ""),
+            path=file,  
+        )
+        return JsonResponse({
+            "id": song.id,
+            "title": song.title,
+            "path": song.path.url if song.path else "",
+        }, status=201)
 
     elif request.method == "PUT":
         try:
