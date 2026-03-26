@@ -10,7 +10,7 @@
 ##  1. Clone Project
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/3393412/Cithara.git
 cd <your-project-folder>
 ```
 
