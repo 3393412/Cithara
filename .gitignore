@@ -62,3 +62,17 @@ env/
 .DS_Store
 *.swp
 *~
+
+# Windows
+Thumbs.db
+desktop.ini
+ehthumbs.db
+
+# Test / coverage
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Misc
+*.bak
+*.tmp

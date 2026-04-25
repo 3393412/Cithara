@@ -5,3 +5,5 @@ pip==25.3
 PyMySQL==1.1.2
 sqlparse==0.5.5
 tzdata==2025
+requests>=2.31
+python-dotenv>=1.0

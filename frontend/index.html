@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cithara — AI Music Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+
+  <div id="page-login">
+    <div class="login-bg"></div>
+    <div class="login-card page-fade">
+      <div class="login-logo">♪ Cithara</div>
+      <p class="login-tagline">Create music from your story</p>
+      <button class="btn-google" id="btn-google">
+        <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true">
+          <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+          <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+          <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+          <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+        </svg>
+        Continue with Google
+      </button>
+      <p class="login-footer">Powered by Suno AI</p>
+    </div>
+  </div>
+
+  <div id="app-shell" style="display:none">
+    <div style="display:flex;min-height:100vh;">
+
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">♪ Cithara</div>
+        <nav class="sidebar-nav">
+          <button class="nav-item" id="nav-generate" onclick="switchTab('generate')">
+            <span class="nav-icon">✨</span> Generate
+          </button>
+          <button class="nav-item" id="nav-library" onclick="switchTab('library')">
+            <span class="nav-icon">🎵</span> Library
+          </button>
+          <div class="nav-divider"></div>
+          <button class="nav-item" id="nav-flow" onclick="switchTab('flow')">
+            <span class="nav-icon">🗺</span> Flow Monitor
+          </button>
+          <button class="nav-item" id="nav-help" onclick="openHelp()">
+            <span class="nav-icon">❓</span> Help
+          </button>
+        </nav>
+        <div class="sidebar-user">
+          <img class="user-avatar" id="sidebar-avatar" src="" alt="avatar" />
+          <div class="user-info">
+            <div class="user-name"  id="sidebar-name">—</div>
+            <div class="user-email" id="sidebar-email">—</div>
+          </div>
+          <button class="btn-logout" title="Logout">⏻</button>
+        </div>
+      </aside>
+
+      <main class="main-content">
+
+        <section id="main-generate" class="page-fade">
+          <div class="page-header">
+            <div>
+              <h1 class="page-title">Create your song</h1>
+              <p class="page-subtitle">Fill in the details below to generate your perfect track</p>
+            </div>
+          </div>
+          <div class="generate-layout">
+            <form class="generate-form" id="gen-form" onsubmit="handleGenerate(event)">
+              <div class="generate-cols">
+                <div class="generate-col-left">
+                  <div class="form-group">
+                    <label class="form-label">Song Title</label>
+                    <input type="text" class="form-input" id="f-title" placeholder="Give your song a name..." />
+                    <span class="form-helper">Leave blank to auto-generate</span>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Prompt <span style="color:var(--error)">*</span></label>
+                    <textarea class="form-textarea" id="f-prompt" rows="6" placeholder="Describe your song... e.g. A chill lo-fi beat for late-night coding sessions with soft piano and rain sounds" required></textarea>
+                    <span class="form-helper">Be descriptive — the more detail, the better the result</span>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Story</label>
+                    <textarea class="form-textarea" id="f-story" rows="5" placeholder="Tell the story behind your song... (optional)"></textarea>
+                    <span class="form-helper">Add context or emotion to influence the composition</span>
+                  </div>
+                </div>
+                <div class="generate-col-right">
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label class="form-label">Genre</label>
+                      <div class="select-wrap">
+                        <select class="form-select" id="f-genre">
+                          <option value="">Select genre</option>
+                          <option value="lofi">Lo-fi</option>
+                          <option value="pop">Pop</option>
+                          <option value="rock">Rock</option>
+                          <option value="jazz">Jazz</option>
+                          <option value="country">Country</option>
+                          <option value="shoegaze">Shoegaze</option>
+                          <option value="electronic">Electronic</option>
+                          <option value="classical">Classical</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Mood</label>
+                      <div class="select-wrap">
+                        <select class="form-select" id="f-mood">
+                          <option value="">Select mood</option>
+                          <option value="happy">Happy</option>
+                          <option value="Romantic">Calm</option>
+                          <option value="sad">Sad</option>
+                          <option value="energetic">Energetic</option>
+                          <option value="dark">Dark</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label class="form-label">Vocal</label>
+                      <div class="select-wrap">
+                        <select class="form-select" id="f-vocal">
+                          <option value="">Select vocal</option>
+                          <option value="male">Male</option>
+                          <option value="female">Female</option>
+                          <option value="none">Instrumental</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Occasion</label>
+                      <div class="select-wrap">
+                        <select class="form-select" id="f-occasion">
+                          <option value="">Select occasion</option>
+                          <option value="study">Study</option>
+                          <option value="party">Party</option>
+                          <option value="workout">Workout</option>
+                          <option value="sleep">Sleep</option>
+                          <option value="none">General</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="tips-card">
+                    <span class="tips-icon">💡</span>
+                    <div>
+                      <div class="tips-label">Tips</div>
+                      <div class="tips-text">Try Shoegaze for dreamy atmospheric results</div>
+                    </div>
+                  </div>
+                  <button type="submit" class="btn btn-primary btn-full btn-generate" id="btn-gen">✨ Generate Song</button>
+                  <div class="result-section" id="result-section">
+                    <div class="result-header"> Song generated successfully!</div>
+                    <div class="result-card" id="result-card"></div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <section id="main-library" style="display:none" class="page-fade">
+          <div class="page-header">
+            <div>
+              <h1 class="page-title">My Library</h1>
+              <p class="page-subtitle">Your generated songs</p>
+            </div>
+          </div>
+          <div class="lib-grid" id="lib-grid"></div>
+        </section>
+
+        <section id="main-flow" style="display:none" class="page-fade">
+          <div class="page-header" style="margin-bottom:24px;">
+            <div>
+              <h1 class="page-title">Flow Monitor</h1>
+              <p class="page-subtitle">Design Pattern and flow</p>
+            </div>
+          </div>
+
+          <div class="flow-page-grid">
+
+            <div class="flow-diag-panel">
+
+              <div class="flow-section-title">Authentication</div>
+              <div class="fn-flow-row">
+                <div class="fn" id="n-user">
+                  <span class="fn-icon">👤</span>
+                  <div class="fn-body">
+                    <div class="fn-name">User</div>
+                    <div class="fn-file">browser / client</div>
+                  </div>
+                </div>
+                <div class="fn-arrow">→</div>
+                <div class="fn" id="n-oauth">
+                  <span class="fn-icon">🔐</span>
+                  <div class="fn-body">
+                    <div class="fn-name">Google OAuth</div>
+                    <div class="fn-file">users/auth/google.py</div>
+                  </div>
+                  <span class="fn-badge">Strategy</span>
+                </div>
+                <div class="fn-arrow">→</div>
+                <div class="fn" id="n-session">
+                  <span class="fn-icon">💾</span>
+                  <div class="fn-body">
+                    <div class="fn-name">Django Session</div>
+                    <div class="fn-file">users/auth/service.py</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flow-section-gap"></div>
+
+              <div class="flow-section-title">Generation Pipeline</div>
+
+              <div class="fn" id="n-form">
+                <span class="fn-icon">📝</span>
+                <div class="fn-body">
+                  <div class="fn-name">Generate Form</div>
+                  <div class="fn-file">song_api/views.py → generate_song()</div>
+                </div>
+              </div>
+              <div class="fn-conn-v"></div>
+
+              <div class="fn" id="n-view">
+                <span class="fn-icon">⚙️</span>
+                <div class="fn-body">
+                  <div class="fn-name">Django View</div>
+                  <div class="fn-file">song_api/views.py · song_api/urls.py</div>
+                </div>
+              </div>
+              <div class="fn-conn-v"></div>
+
+              <div class="fn" id="n-service">
+                <span class="fn-icon">🔧</span>
+                <div class="fn-body">
+                  <div class="fn-name">GenerationService</div>
+                  <div class="fn-file">song_api/generation/service.py → start()</div>
+                </div>
+              </div>
+              <div class="fn-conn-v"></div>
+
+              <div class="fn" id="n-factory">
+                <span class="fn-icon">🏭</span>
+                <div class="fn-body">
+                  <div class="fn-name">Strategy Factory</div>
+                  <div class="fn-file">song_api/generation/factory.py → get_strategy()</div>
+                </div>
+                <span class="fn-badge">Factory</span>
+              </div>
+
+              <div class="fn-branch-label">GENERATOR_STRATEGY in .env </div>
+
+              <div class="fn-branches-row">
+
+                <div class="fn-branch-col">
+                  <div class="fn" id="n-mock">
+                    <span class="fn-icon">🧪</span>
+                    <div class="fn-body">
+                      <div class="fn-name">MockStrategy</div>
+                      <div class="fn-file">generation/mock.py</div>
+                    </div>
+                    <span class="fn-badge teal">Mock</span>
+                  </div>
+                  <div class="fn-conn-v"></div>
+                  <div class="fn" id="n-instant" style="border-color:rgba(20,184,166,0.2);background:rgba(20,184,166,0.04);">
+                    <span class="fn-icon">✅</span>
+                    <div class="fn-body">
+                      <div class="fn-name" style="color:var(--teal)">Instant SUCCESS</div>
+                      <div class="fn-file">GenerationResult (no API)</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="fn-branch-col">
+                  <div class="fn" id="n-suno">
+                    <span class="fn-icon">🎵</span>
+                    <div class="fn-body">
+                      <div class="fn-name">SunoStrategy</div>
+                      <div class="fn-file">generation/suno.py</div>
+                    </div>
+                    <span class="fn-badge">Suno</span>
+                  </div>
+                  <div class="fn-conn-v"></div>
+                  <div class="fn" id="n-api">
+                    <span class="fn-icon">☁️</span>
+                    <div class="fn-body">
+                      <div class="fn-name">Suno API</div>
+                      <div class="fn-file">external · SUNO_API_KEY in .env</div>
+                    </div>
+                  </div>
+                  <div class="fn-conn-v"></div>
+                  <div class="fn" id="n-poll">
+                    <span class="fn-icon">🔄</span>
+                    <div class="fn-body">
+                      <div class="fn-name">Poll Status</div>
+                      <div class="fn-file">service.py → poll() · GET /generate/&lt;id&gt;/status</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="fn-merge-label">merge → SUCCESS</div>
+              <div class="fn-conn-v"></div>
+
+              <div class="fn" id="n-db">
+                <span class="fn-icon">🗄️</span>
+                <div class="fn-body">
+                  <div class="fn-name">Song Model (DB)</div>
+                  <div class="fn-file">song_api/models.py → Song.objects.create()</div>
+                </div>
+              </div>
+              <div class="fn-conn-v"></div>
+
+              <div class="fn" id="n-library">
+                <span class="fn-icon">📚</span>
+                <div class="fn-body">
+                  <div class="fn-name">Library</div>
+                  <div class="fn-file">song_api/views.py → songs_api() GET</div>
+                </div>
+              </div>
+              <div class="fn-conn-v"></div>
+
+              <div class="fn" id="n-audio">
+                <span class="fn-icon">🔊</span>
+                <div class="fn-body">
+                  <div class="fn-name">Audio URL → User</div>
+                  <div class="fn-file">song.audio_url · &lt;audio controls&gt;</div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </section>
+
+      </main>
+
+    </div>
+  </div>
+
+  <div id="page-shared" style="display:none">
+    <div class="shared-card page-fade">
+      <p class="shared-badge">🔗 Shared song</p>
+      <div class="shared-art" id="shared-art" style="background:linear-gradient(135deg,#667eea,#764ba2)">🌙</div>
+      <h1 class="shared-title" id="shared-title">Midnight Study</h1>
+      <p class="shared-meta" id="shared-meta">Lo-fi · Calm · Instrumental</p>
+      <p class="shared-by" id="shared-by">Shared by piyawat</p>
+      <div class="shared-player">
+        <audio controls id="shared-audio">
+          <source src="" type="audio/mpeg" />
+        </audio>
+      </div>
+      <button class="btn btn-primary btn-full" onclick="downloadSharedSong()">⬇️ Download Song</button>
+      <div style="margin-top:14px;text-align:center;">
+        <a href="/" style="color:var(--text-muted);font-size:0.8125rem;text-decoration:none;">
+          ✨ Create your own song at Cithara →
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div id="progress-overlay">
+    <div class="progress-card">
+      <span class="progress-icon" id="prog-icon">🎼</span>
+      <h2 class="progress-title">Generating your song</h2>
+      <p class="progress-stage" id="prog-stage">Preparing...</p>
+      <div class="progress-track">
+        <div class="progress-fill" id="prog-bar" style="width:0%"></div>
+      </div>
+      <p class="progress-pct" id="prog-pct">0%</p>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="share-modal" onclick="closeModalOnBg(event,'share-modal')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <span class="modal-title">🔗 Share Song</span>
+        <button class="modal-close" onclick="closeModal('share-modal')">✕</button>
+      </div>
+      <p style="color:var(--text-secondary);font-size:0.9rem;">Anyone with this link can listen to your song.</p>
+      <div class="share-url-row">
+        <span class="share-url-text" id="share-url-text">https://cithara.app/shared/abc123</span>
+        <button class="btn btn-secondary" onclick="copyShareLink()" style="flex-shrink:0;">Copy</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="dl-modal" onclick="closeModalOnBg(event,'dl-modal')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <span class="modal-title">⬇️ Download Song</span>
+        <button class="modal-close" onclick="closeModal('dl-modal')">✕</button>
+      </div>
+      <p style="color:var(--text-secondary);font-size:0.9rem;">Select format:</p>
+      <div class="fmt-options">
+        <button class="fmt-btn" onclick="handleDownload('MP3')">
+          <span class="fmt-icon">🎵</span><span class="fmt-name">MP3</span><span class="fmt-desc">~8 MB · Universal</span>
+        </button>
+        <button class="fmt-btn" onclick="handleDownload('M4A')">
+          <span class="fmt-icon">🎼</span><span class="fmt-name">M4A</span><span class="fmt-desc">~6 MB · High quality</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="help-modal" onclick="closeModalOnBg(event,'help-modal')">
+    <div class="modal" onclick="event.stopPropagation()" style="max-width:560px;">
+      <div class="modal-header">
+        <span class="modal-title">❓ How to use Cithara</span>
+        <button class="modal-close" onclick="closeModal('help-modal')">✕</button>
+      </div>
+      <p style="color:var(--text-secondary);font-size:0.9rem;margin-bottom:18px;">
+      </p>
+      <div class="help-steps">
+        <div class="help-step">
+          <span class="help-step-num">1</span>
+          <div class="help-step-body">
+            <div class="help-step-title">🔐 Login</div>
+            <div class="help-step-desc">Sign in with your Google account — all your songs are saved automatically</div>
+          </div>
+        </div>
+        <div class="help-step">
+          <span class="help-step-num">2</span>
+          <div class="help-step-body">
+            <div class="help-step-title">✨ Generate</div>
+            <div class="help-step-desc">Describe your song in the prompt → Choose genre, mood, vocal, occasion → Click Generate Song <br/>More detail = Better results</div>
+          </div>
+        </div>
+        <div class="help-step">
+          <span class="help-step-num">3</span>
+          <div class="help-step-body">
+            <div class="help-step-title">🎵 Preview & Library</div>
+            <div class="help-step-desc">Listen to your song instantly after generation → All songs saved in Library <br/>View real-time system flow on Flow Monitor</div>
+          </div>
+        </div>
+        <div class="help-step">
+          <span class="help-step-num">4</span>
+          <div class="help-step-body">
+            <div class="help-step-title">🔗 Share & Download</div>
+            <div class="help-step-desc">Click Share to copy link and send to friends — they can listen directly <br/>Or Download as MP3/M4A for offline listening</div>
+          </div>
+        </div>
+        <div class="help-step">
+          <span class="help-step-num">🔄</span>
+          <div class="help-step-body">
+            <div class="help-step-title">🔄 Regenerate</div>
+            <div class="help-step-desc">Don't like the result? Click Regenerate to create a new variation with same settings</div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:20px;display:flex;gap:10px;">
+        <button class="btn btn-primary btn-full" onclick="closeModal('help-modal'); startTour();">
+          🎯 Take the Interactive Tour
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="tour-root">
+    <div class="tour-spotlight" id="tour-spotlight"></div>
+    <div class="tour-tooltip" id="tour-tooltip">
+      <div class="tour-tooltip-step" id="tour-tooltip-step">STEP 1 / 5</div>
+      <div class="tour-tooltip-title" id="tour-tooltip-title">—</div>
+      <div class="tour-tooltip-desc" id="tour-tooltip-desc">—</div>
+      <div class="tour-tooltip-actions">
+        <button class="btn btn-ghost" onclick="endTour(true)">Skip Tour</button>
+        <button class="btn btn-primary" id="tour-next-btn" onclick="nextTourStep()">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+
+  <div class="bottom-nav" id="bottom-nav" style="display:none">
+    <div class="bnav-items">
+      <button class="bnav-item" id="bnav-gen" onclick="switchTab('generate')"><span class="bnav-icon">✨</span><span>Generate</span></button>
+      <button class="bnav-item" id="bnav-lib" onclick="switchTab('library')"><span class="bnav-icon">🎵</span><span>Library</span></button>
+      <button class="bnav-item" id="bnav-flo" onclick="switchTab('flow')"><span class="bnav-icon">🗺</span><span>Flow</span></button>
+      <button class="bnav-item" id="bnav-help" onclick="openHelp()"><span class="bnav-icon">❓</span><span>Help</span></button>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
