@@ -9,4 +9,4 @@ class MockAuthStrategy(AuthStrategy):
         return f'{redirect_uri}?code={self._FAKE_CODE}&state={state}'
 
     def handle_callback(self, code: str) -> UserInfo:
-        return UserInfo(google_id='mock-123', email='mock@test.com', name='Mock User', avatar_url='')
+        return UserInfo(google_id='mock-122223', email='mock@test.com', name='Mock User', avatar_url='')
