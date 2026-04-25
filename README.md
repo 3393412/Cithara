@@ -230,13 +230,13 @@ username, title, genre, mood, vocal, occasion, prompt, story, path (file)
 **POST body (JSON)**
 ```json
 {
-  "prompt": "A dreamy shoegaze track with reverb guitar",
+  "prompt": "A hard shoegaze track with noise distortion",
   "title": "My Song",
   "genre": "shoegaze",
   "mood": "dark",
-  "vocal": "female",
+  "vocal": "f",
   "occasion": "study",
-  "story": "Late night in the city..."
+  "story": "Last night drive with alternategirl..."
 }
 ```
 
