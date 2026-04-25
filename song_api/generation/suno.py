@@ -17,11 +17,31 @@ class SunoSongGeneratorStrategy(SongGeneratorStrategy):
         return {'Authorization': f'Bearer {self.api_key}', 'Content-Type': 'application/json'}
 
     def generate(self, request: GenerationRequest) -> GenerationResult:
-        payload: dict = {'prompt': request.prompt, 'customMode': request.custom_mode, 'instrumental': request.instrumental, 'model': request.model, 'callBackUrl': 'https://example.com/callback'}
-        print('PAYLOAD TO SUNO:', payload)
+        is_instrumental = request.vocal in ('none', '', None)
+
+        if request.custom_mode:
+            full_prompt = request.story or request.prompt
+            style = f'{request.genre} {request.mood}'.strip() or 'pop'
+        else:
+            full_prompt = request.prompt
+            style = None
+
+        payload: dict = {
+            'prompt': full_prompt,
+            'customMode': request.custom_mode,
+            'instrumental': is_instrumental,
+            'model': request.model,
+            'callBackUrl': 'https://example.com/callback',
+        }
+
+        if not is_instrumental:
+            payload['vocalGender'] = 'm' if request.vocal == 'male' else 'f'
+
         if request.custom_mode:
             payload['title'] = request.title or 'Untitled'
-            payload['style'] = request.style or f'{request.genre} {request.mood}'.strip() or 'pop'
+            payload['style'] = style
+
+        print('PAYLOAD TO SUNO:', payload)
         try:
             resp = requests.post(f'{self.base_url}/generate', json=payload, headers=self._headers(), timeout=self.timeout)
             print('STATUS CODE:', resp.status_code)

@@ -1,7 +1,4 @@
-"""GenerationService — orchestrates strategy + persistence.
 
-View เรียกที่เดียว ไม่ต้องรู้จัก strategy ตรง ๆ
-"""
 from users.models import User
 from ..models import GenerationJob, Song
 from .base import GenerationRequest, GenerationResult
@@ -13,7 +10,7 @@ class GenerationService:
         self.strategy = strategy or get_strategy()
 
     def start(self, *, username: str, prompt: str, title: str='', genre: str='', mood: str='', vocal: str='', occasion: str='', story: str='') -> GenerationJob:
-        """เริ่มงาน generate ใหม่ → สร้าง GenerationJob"""
+
         user = User.objects.filter(username=username).first()
         req = GenerationRequest(prompt=prompt, title=title, genre=genre, mood=mood, vocal=vocal, occasion=occasion, story=story, style=f'{genre} {mood}'.strip(), custom_mode=bool(title))
         result: GenerationResult = self.strategy.generate(req)
@@ -25,7 +22,6 @@ class GenerationService:
         return job
 
     def poll(self, job: GenerationJob) -> GenerationJob:
-        """ถามสถานะจาก provider — ถ้าเพิ่ง SUCCESS จะสร้าง Song"""
         if job.status in (GenerationJob.STATUS_SUCCESS, GenerationJob.STATUS_FAILED):
             return job
         strategy = get_strategy(job.provider)

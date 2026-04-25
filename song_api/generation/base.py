@@ -20,7 +20,7 @@ class GenerationRequest:
     style: str = ''
     instrumental: bool = False
     custom_mode: bool = False
-    model: str = 'V3_5'
+    model: str = 'V4_5ALL'
 
 @dataclass
 class GenerationResult:
